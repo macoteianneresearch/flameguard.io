@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#030712"><title>FLAMEGUARD | Mission Control</title>
+<style>
+:root{--bg:#030712;--panel:#0b1329;--panel2:#101c35;--line:#1e3150;--cyan:#06b6d4;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--text:#e2e8f0;--muted:#8294ae}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:13px Inter,system-ui,Arial,sans-serif;background-image:radial-gradient(ellipse at 50% -20%,#102b4c,transparent 50%)}
+button,input,select{font:inherit}button{cursor:pointer}header{height:68px;padding:0 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#050b18ed;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:38px;height:38px;border:1px solid var(--cyan);border-radius:11px;display:grid;place-items:center;color:var(--cyan);font-size:21px;box-shadow:0 0 18px #06b6d433}.brand h1{font-size:17px;letter-spacing:3px;margin:0}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.3px;margin-top:3px}
+.topright{display:flex;gap:15px;align-items:center;font-size:10px;color:var(--muted)}.statusdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber);margin-right:6px}.statusdot.online{background:var(--green);box-shadow:0 0 9px var(--green);animation:pulse 1.5s infinite}@keyframes pulse{50%{opacity:.4}}
+main{max-width:1750px;margin:auto;padding:17px 20px}.intro{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.eyebrow,.sectionlabel{font-size:9px;color:var(--cyan);letter-spacing:1.6px}.intro h2{font-size:19px;margin:5px 0 0}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{background:#10223a;border:1px solid #29415e;color:var(--text);padding:9px 12px;border-radius:7px;font-size:10px}.btn:hover{border-color:var(--cyan);color:var(--cyan)}.btn.primary{background:#07566a;border-color:#087e96;color:white}.btn.active{background:#064e3b;border-color:var(--green);color:#6ee7b7}
+.grid{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(350px,1.35fr) minmax(270px,1fr);gap:13px;align-items:start}.stack{display:grid;gap:13px}.panel{background:linear-gradient(145deg,#0c162c,#091225);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}.head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.head h3{font-size:10px;letter-spacing:1.1px;margin:0}.head span{font-size:9px;color:var(--muted)}.body{padding:13px}.sectionlabel{margin:5px 0 12px}.field{margin-bottom:13px}.fieldtop{display:flex;justify-content:space-between;margin-bottom:6px}.field label{font-size:10px;color:#bdc9d9}.value{color:var(--cyan);font-weight:700}input[type=range]{width:100%;accent-color:var(--cyan)}select{width:100%;background:#071124;color:var(--text);border:1px solid #29415e;border-radius:6px;padding:9px;font-size:10px}.gravity{display:grid;grid-template-columns:1fr 1fr;gap:6px}.gravity button{padding:8px;border:1px solid var(--line);background:#071124;color:var(--muted);border-radius:6px}.gravity button.selected{border-color:var(--cyan);background:#083247;color:#67e8f9}.hint{font-size:9px;color:var(--muted);line-height:1.5}.checklist{display:grid;gap:8px}.check{display:flex;justify-content:space-between;color:#b7c6d9;font-size:10px}.check b{color:var(--green);font-weight:600}.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.kpi,.metric{padding:11px;background:#071124;border:1px solid var(--line);border-radius:7px}.kpi small,.metric span{font-size:9px;color:var(--muted)}.kpi strong{display:block;font-size:19px;margin:7px 0 3px}.kpi em{font-size:9px;color:var(--muted);font-style:normal}.spacewrap{background:#050c1b;position:relative}.spacewrap canvas{width:100%;height:340px;display:block}.canvaslabel{position:absolute;top:11px;left:12px;color:#7dd3fc;font-size:9px;letter-spacing:1.2px;pointer-events:none}.zones{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px}.zone{padding:9px 4px;text-align:center;background:#071124;border:1px solid var(--line);border-radius:6px;color:var(--muted);font-size:9px}.zone b{display:block;color:#cbd5e1;margin-bottom:4px}.zone.selected{border-color:var(--cyan);background:#083247}.zone.low{box-shadow:inset 0 -3px var(--green)}.zone.moderate{box-shadow:inset 0 -3px var(--amber)}.zone.high{box-shadow:inset 0 -3px var(--red)}
+.chartbox{padding:11px 12px}.charttitle{display:flex;justify-content:space-between;margin-bottom:7px}.charttitle b{font-size:10px}.charttitle span{font-size:9px;color:var(--muted)}canvas.chart{width:100%;height:115px;display:block}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:7px}.metric b{display:block;margin-top:6px;font-size:14px}.alert{padding:10px;border:1px solid var(--line);border-radius:7px;background:#071124;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.pill{padding:5px 8px;border-radius:5px;font-size:9px;font-weight:800}.low{color:#6ee7b7;background:#064e3b}.moderate{color:#fcd34d;background:#713f12}.high{color:#fca5a5;background:#7f1d1d}.tablepanel{margin-top:13px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:10px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:500;background:#091326}td{color:#cbd5e1}.empty{text-align:center;color:var(--muted);padding:20px}.note{padding:9px;background:#422e0b;border:1px solid #755216;border-radius:7px;color:#fcd34d;font-size:9px;line-height:1.5;margin-top:10px}.footer{text-align:center;color:#53647e;font-size:9px;padding:18px 0 4px;letter-spacing:.5px}
+@media(max-width:1100px){.grid{grid-template-columns:minmax(230px,.8fr) minmax(340px,1.2fr)}.right{grid-column:1/-1;grid-template-columns:1fr 1fr}.right .panel:last-child{grid-column:1/-1}}
+@media(max-width:700px){header{padding:0 12px}.topright .mode{display:none}main{padding:12px}.grid{grid-template-columns:1fr}.right{grid-column:auto;grid-template-columns:1fr}.right .panel:last-child{grid-column:auto}.spacewrap canvas{height:285px}.zones{grid-template-columns:repeat(2,1fr)}}
+
+/* FLAMEGUARD visual refinement */
+:root{--line:#203957;--cyan:#38d9f4;--panel:#0a1428}
+body{background-image:radial-gradient(ellipse at 50% -15%,#153b62 0%,transparent 48%),radial-gradient(ellipse at 100% 45%,#10243e 0%,transparent 38%);background-attachment:fixed}
+header{background:rgba(3,9,22,.88);border-bottom-color:#284563;box-shadow:0 8px 30px #0005}
+.logo{border-radius:12px;background:linear-gradient(145deg,#123b58,#07182b);box-shadow:0 0 24px #06b6d455,inset 0 0 12px #38d9f422}
+.brand h1{font-weight:800;letter-spacing:3.6px;text-shadow:0 0 20px #38d9f455}
+main{padding-top:22px}
+.intro{padding:16px 18px;margin-bottom:16px;border:1px solid #294663;border-radius:13px;background:linear-gradient(105deg,#0b1b31dd,#0b1629aa 60%,#10263b88);box-shadow:0 14px 36px #0003}
+.intro h2{font-size:22px;letter-spacing:.1px}
+.panel{border-radius:13px;border-color:#25415f;background:linear-gradient(145deg,rgba(13,27,49,.97),rgba(7,17,34,.97));box-shadow:0 12px 32px #0003;transition:border-color .2s,transform .2s}
+.panel:hover{border-color:#386184}
+.head{background:linear-gradient(90deg,#11264288,transparent);padding:14px 16px}
+.head h3{letter-spacing:1.35px}
+.body{padding:15px}
+.btn{border-radius:8px;transition:all .18s;box-shadow:inset 0 1px #ffffff0b}
+.btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px #06b6d422}
+.btn.primary{background:linear-gradient(120deg,#087b91,#07566a);box-shadow:0 0 22px #06b6d422}
+.kpi,.metric,.zone{border-radius:9px;background:linear-gradient(145deg,#0b1a30,#071225)}
+.kpi strong{letter-spacing:.3px}
+.spacewrap{background:radial-gradient(ellipse at 50% 55%,#102b49 0%,#050b19 72%);overflow:hidden}
+.spacewrap canvas{height:340px;display:block}
+.canvaslabel{z-index:1;padding:7px 10px;border:1px solid #2c5573;border-radius:6px;background:#07182bd9;backdrop-filter:blur(8px);font-weight:700}
+.zone{transition:all .2s}.zone:hover{border-color:#38d9f4;transform:translateY(-2px)}
+.chartbox{padding:14px 15px}
+.note{background:linear-gradient(120deg,#38290f,#201b17);border-color:#72521b}
+@media(max-width:700px){.spacewrap canvas{height:285px}.intro{padding:13px}.intro h2{font-size:18px}}
+
+/* DAEDALUS-inspired command deck: retain all original FLAMEGUARD controls */
+:root{--bg:#031316;--line:#17484b;--cyan:#39e2df;--text:#d7efed;--muted:#78a1a0}
+body{background:#031316;background-image:linear-gradient(#0b303344 1px,transparent 1px),linear-gradient(90deg,#0b303344 1px,transparent 1px),radial-gradient(ellipse at 50% 40%,#0c414433,transparent 65%);background-size:30px 30px,30px 30px,auto;background-attachment:fixed}
+header{height:62px;padding:0 20px;background:#031316;border-bottom:1px solid #216064;box-shadow:none}
+.brand h1{font-size:25px;letter-spacing:2px;font-weight:400;color:#8cf7ef;text-shadow:0 0 15px #38d9f455}
+.logo{border-radius:2px;border-color:#39deda;color:#75f4ef;background:#06272a;box-shadow:none}
+main{max-width:1900px;padding:13px 15px}
+.intro{padding:12px 15px;margin-bottom:10px;background:#062327;border:1px solid #1d5356;border-radius:2px;box-shadow:none}
+.intro h2{font-size:17px;font-weight:500}
+.mission-tabs{position:sticky;top:62px;z-index:8;display:flex;gap:2px;overflow-x:auto;padding:0 14px;height:40px;background:#031a1d;border-bottom:1px solid #1d5558}
+.mission-tab{flex:0 0 auto;padding:0 15px;border:0;border-bottom:2px solid transparent;background:transparent;color:#78a4a3;font-size:9px;letter-spacing:1px}
+.mission-tab:hover,.mission-tab.active{color:#60f4ed;border-bottom-color:#43e4df;background:#0a3032}
+.grid{grid-template-columns:minmax(245px,.9fr) minmax(420px,1.7fr) minmax(270px,.95fr);grid-template-areas:"backend spacecraft telemetry" "controls spacecraft analytics";gap:9px;align-items:stretch}
+.grid>.stack{display:contents}
+#backend{grid-area:backend}#controls{grid-area:controls}#spacecraft{grid-area:spacecraft;align-self:stretch}#telemetry{grid-area:telemetry}#analytics{grid-area:analytics}
+.panel{border-radius:2px;border:1px solid #1a5053;background:rgba(3,23,26,.96);box-shadow:none;min-width:0}
+.head{padding:10px 12px;background:#08292c;border-bottom:1px solid #1a5053}
+.head h3{font-size:10px;color:#c7e8e5;letter-spacing:1px}
+.body{padding:12px}
+.kpi,.metric,.zone{border-radius:2px;background:#061b1e;border-color:#1b4b4d}
+.kpi strong{color:#54e6df}
+.btn{border-radius:2px;background:#082c30;border-color:#286468}
+.btn.primary{background:#08777a;border-color:#39deda}
+select{border-radius:2px;background:#04191c;border-color:#245457}
+.gravity button{border-radius:2px;background:#04191c}
+.gravity button.selected{background:#0b3c3d;border-color:#42dfd9}
+.spacewrap{background:#031316;border-bottom:1px solid #17484b}
+.spacewrap canvas{height:clamp(420px,58vh,690px)}
+.canvaslabel{border-radius:0;background:#05292cdd;border-color:#28666a;color:#75efea}
+.zones{gap:5px}
+.zone{border-radius:2px}
+.chartbox{padding:10px 12px}
+canvas.chart{height:92px}
+.tablepanel{margin-top:9px}
+th{background:#082528}
+.note{border-radius:2px}
+.footer{color:#527c7c}
+.focus-close{display:none;position:fixed;right:22px;top:112px;z-index:30;padding:11px 15px;background:#073437;color:#8ff9f2;border:1px solid #43dfd9;cursor:pointer;font-size:10px;letter-spacing:1px}
+body.focus-mode{overflow:hidden}
+body.focus-mode:before{content:"";position:fixed;inset:0;background:#000c;z-index:20}
+body.focus-mode .panel.focused{position:fixed;z-index:25;inset:8vh 5vw;width:90vw;height:84vh;overflow:auto;box-shadow:0 0 0 1px #4ce5df,0 0 50px #00c9d455}
+body.focus-mode .panel:not(.focused){visibility:hidden}
+body.focus-mode .focus-close{display:block}
+body.focus-mode .panel.focused .spacewrap canvas{height:calc(65vh - 80px)}
+@media(max-width:1100px){.grid{grid-template-columns:minmax(230px,.85fr) minmax(340px,1.2fr);grid-template-areas:"backend spacecraft" "controls spacecraft" "telemetry analytics"}}
+@media(max-width:700px){header{height:58px}.mission-tabs{top:58px}.mission-tab{padding:0 11px}.grid{display:grid;grid-template-columns:1fr;grid-template-areas:"backend" "controls" "spacecraft" "telemetry" "analytics"}.spacewrap canvas{height:330px}body.focus-mode .panel.focused{inset:6vh 3vw;width:94vw;height:88vh}.focus-close{top:10px;right:10px}}
+</style></head>
+<body>
+<header><div class="brand"><div class="logo">✦</div><div><h1>FLAMEGUARD</h1><small>FIRE LEARNING & MICROGRAVITY ANALYTICS</small></div></div><div class="topright"><span><i id="dot" class="statusdot"></i><b id="serverStatus">CHECKING PYTHON SERVER</b></span><span class="mode" id="mode">CONNECTING…</span><span id="clock"></span></div></header>
+<main>
+<div class="intro"><div><div class="eyebrow">NASA SPACE APPS CHALLENGE // RESEARCH SIMULATION</div><h2>Microgravity Fire Safety Mission Control</h2></div><div class="actions"><button class="btn" id="reset">↺ RESET</button><button class="btn" id="sample">▣ LOAD SAMPLE</button><button class="btn primary" id="run">▶ RUN SIMULATION</button><button class="btn" id="stream">▶ START LIVE PYTHON STREAM</button></div></div>
+<div class="grid">
+<section id="backend" class="panel"><div class="head"><h3>01 / PYTHON BACKEND & SYSTEM CHECKS</h3><span>PORT 8080</span></div><div class="body"><div class="sectionlabel">Backend connectivity</div><div class="checklist"><div class="check"><span>Python server :8080</span><b id="cServer">CHECKING</b></div><div class="check"><span>REST telemetry endpoint</span><b id="cApi">CHECKING</b></div><div class="check"><span>Sensor data stream</span><b id="cSensors">SIMULATED</b></div><div class="check"><span>Predictive model</span><b>DEMO MODEL</b></div></div><div class="note">The included Python service generates synthetic demonstration telemetry. It is not connected to physical spacecraft sensors or certified NASA predictive models.</div><div class="sectionlabel" style="margin-top:17px">Mission snapshot</div><div class="kpis"><div class="kpi"><small>ACTIVE RUN ID</small><strong id="runId" class="cyan">FG-0000</strong><em>Local session</em></div><div class="kpi"><small>FUEL MATERIAL</small><strong id="fuelKpi" style="font-size:14px">Cellulose</strong><em>Selected category</em></div><div class="kpi"><small>CONNECTION</small><strong id="connectionKpi" class="amber" style="font-size:14px">WAITING</strong><em>API status</em></div><div class="kpi"><small>AMBIENT PRESSURE</small><strong id="pressureKpi">101</strong><em>kPa</em></div></div></div></section>
+<section class="stack">
+<section id="controls" class="panel"><div class="head"><h3>02 / EXPERIMENT INPUT CONSOLE</h3><span>MISSION PARAMETERS</span></div><div class="body">
+<div class="field"><div class="fieldtop"><label>Mission scenario preset</label></div><select id="preset"><option value="iss">ISS Microgravity Spherical Flame</option><option value="oxygen">Enriched O₂ Cabin Alert</option><option value="glovebox">Glovebox Flame Observation</option><option value="lunar">Lunar Habitat Gravity</option><option value="avionics">Avionics Bay Thermal Anomaly</option></select></div>
+<div class="field"><div class="fieldtop"><label>Flame temperature</label><span class="value" id="tempV">650 °C</span></div><input id="temp" type="range" min="20" max="1500" value="650" step="10"></div>
+<div class="field"><div class="fieldtop"><label>Oxygen concentration</label><span class="value" id="oxygenV">21 %</span></div><input id="oxygen" type="range" min="10" max="100" value="21" step="1"></div>
+<div class="field"><div class="fieldtop"><label>Flame diameter</label><span class="value" id="diameterV">12 mm</span></div><input id="diameter" type="range" min="1" max="60" value="12"></div>
+<div class="field"><div class="fieldtop"><label>Observation duration</label><span class="value" id="durationV">60 s</span></div><input id="duration" type="range" min="10" max="600" value="60" step="5"></div>
+<div class="field"><div class="fieldtop"><label>Cabin pressure</label><span class="value" id="pressureV">101 kPa</span></div><input id="pressure" type="range" min="50" max="120" value="101"></div>
+<div class="sectionlabel">Gravity & fuel category</div><div class="field"><div class="fieldtop"><label>Gravitational regime</label></div><div class="gravity"><button data-g="0" class="selected">MICROGRAVITY · 0g</button><button data-g="1">NORMAL · 1g</button></div></div>
+<div class="field"><div class="fieldtop"><label>Combustible material</label></div><select id="fuel"><option value="cellulose">Cellulose</option><option value="pmma">PMMA (acrylic)</option><option value="polymer">Polymeric material</option><option value="fabric">Textile / fabric</option><option value="foam">Foam material</option><option value="composite">Composite material</option><option value="reference">Reference / inert sample</option></select></div>
+<div class="field"><div class="fieldtop"><label>Sensor module / zone</label></div><select id="zoneSelect"><option>Life-Support / ECLSS</option><option>Equipment Bay</option><option>Cabin Zone A</option><option>Cabin Zone B</option></select></div>
+<div class="hint">Inputs feed an illustrative educational model. Material names are categories only; no NASA-STD-6001B certification or test result is implied.</div>
+</div></section>
+<section id="spacecraft" class="panel"><div class="head"><h3>03 / SPACECRAFT ENVIRONMENT & SENSOR ZONES</h3><span>ANIMATED SPACECRAFT CUTAWAY</span></div>
+<div class="spacewrap"><div class="canvaslabel">LIVE SPACECRAFT VIEW // SELECT A DAMAGED ZONE</div><canvas id="ship"></canvas></div>
+<div class="zones" id="zones"><button class="zone selected low" data-zone="Life-Support / ECLSS"><b>ECLSS LOOP</b>Life Support</button><button class="zone low" data-zone="Equipment Bay"><b>AVIONICS</b>Equipment Bay</button><button class="zone low" data-zone="Cabin Zone A"><b>FIRE / SMOKE</b>Cabin Zone A</button><button class="zone low" data-zone="Cabin Zone B"><b>FIRE / SMOKE</b>Cabin Zone B</button></div>
+</section></section>
+<section class="stack right">
+<section id="telemetry" class="panel"><div class="head"><h3>04 / REAL-TIME TELEMETRY CHARTS</h3><span id="streamState">STANDBY</span></div>
+<div class="chartbox"><div class="charttitle"><b>Temperature vs. Time</b><span>°C</span></div><canvas id="tempChart" class="chart"></canvas></div><div style="height:1px;background:var(--line)"></div>
+<div class="chartbox"><div class="charttitle"><b>Oxygen Concentration vs. Time</b><span>%</span></div><canvas id="oxygenChart" class="chart"></canvas></div><div style="height:1px;background:var(--line)"></div>
+<div class="chartbox"><div class="charttitle"><b>Smoke Optical Density</b><span>RELATIVE INDEX</span></div><canvas id="smokeChart" class="chart"></canvas></div>
+</section>
+<section id="analytics" class="panel"><div class="head"><h3>05 / HAZARD ANALYTICS</h3><span>MODEL OUTPUT</span></div><div class="body">
+<div class="alert"><div><div class="hint">COMPOSITE SIMULATION CATEGORY</div><b id="hazardText">Awaiting run</b></div><span id="hazardPill" class="pill low">READY</span></div>
+<div class="kpis"><div class="kpi"><small>EFFECTIVE LOI INDEX</small><strong id="loi" class="cyan">--</strong><em>Illustrative index</em></div><div class="kpi"><small>OXYGEN MARGIN</small><strong id="margin">--</strong><em>Percentage points</em></div><div class="kpi"><small>FLAME SPREAD INDEX</small><strong id="spread">--</strong><em>Relative units</em></div><div class="kpi"><small>PEAK TEMPERATURE</small><strong id="peak">--</strong><em>Model °C</em></div><div class="kpi"><small>SMOKE DENSITY</small><strong id="smoke">--</strong><em>Relative index</em></div><div class="kpi"><small>CO INDEX</small><strong id="co">--</strong><em>Relative index</em></div></div>
+<div class="hint" style="margin-top:10px">These are synthetic model outputs, not experimentally validated predictions, exposure limits, or operational safety thresholds.</div>
+</div></section></section>
+</div>
+<section id="logs" class="panel tablepanel"><div class="head"><h3>06 / TELEMETRY RUN LOG</h3><div class="actions"><span id="logCount">0 RECORDS</span><button class="btn" id="export">↓ EXPORT CSV</button><button class="btn" id="clear">CLEAR</button></div></div><div class="tablewrap"><table><thead><tr><th>RUN ID</th><th>TIMESTAMP</th><th>MODE</th><th>ZONE</th><th>FUEL</th><th>PRESSURE</th><th>OXYGEN</th><th>HAZARD</th></tr></thead><tbody id="logBody"><tr><td colspan="8" class="empty">No runs recorded yet.</td></tr></tbody></table></div></section>
+<button id="closeFocus" class="focus-close" type="button">× BACK TO OVERVIEW</button><div class="footer">FLAMEGUARD // FIRE LEARNING & ANALYTICS FOR MICROGRAVITY EXPLORATION // EDUCATIONAL SIMULATION</div>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),API='/api',keys=['temp','oxygen','diameter','duration','pressure'];
+let gravity=0,zone='Life-Support / ECLSS',runNo=0,logs=[],streaming=false,timer=null,series={temp:[],oxygen:[],smoke:[]},lastPacket=null;
+const presets={
+ iss:{temp:650,oxygen:21,diameter:12,duration:60,pressure:101,gravity:0,fuel:'cellulose',zone:'Life-Support / ECLSS'},
+ oxygen:{temp:850,oxygen:30,diameter:20,duration:120,pressure:101,gravity:0,fuel:'pmma',zone:'Cabin Zone B'},
+ glovebox:{temp:720,oxygen:21,diameter:18,duration:90,pressure:101,gravity:0,fuel:'fabric',zone:'Cabin Zone A'},
+ lunar:{temp:600,oxygen:21,diameter:12,duration:60,pressure:101,gravity:0,fuel:'composite',zone:'Cabin Zone A'},
+ avionics:{temp:780,oxygen:24,diameter:16,duration:100,pressure:95,gravity:0,fuel:'polymer',zone:'Equipment Bay'}
+};
+const fuelNames={cellulose:'Cellulose',pmma:'PMMA',polymer:'Polymer',fabric:'Textile',foam:'Foam',composite:'Composite',reference:'Reference'};
+const read=()=>({temperature_c:+$('temp').value,oxygen_pct:+$('oxygen').value,diameter_mm:+$('diameter').value,duration_s:+$('duration').value,pressure_kpa:+$('pressure').value,gravity_g:gravity,fuel:$('fuel').value,zone});
+function labels(){const units={temp:' °C',oxygen:' %',diameter:' mm',duration:' s',pressure:' kPa'};keys.forEach(k=>$(k+'V').textContent=$(k).value+units[k]);$('pressureKpi').textContent=$('pressure').value;$('fuelKpi').textContent=fuelNames[$('fuel').value];}
+function setMode(online){$('dot').classList.toggle('online',online);$('serverStatus').textContent=online?'PYTHON SERVER ACTIVE':'PYTHON SERVER OFFLINE';$('mode').textContent=online?'LOCAL PYTHON REST API':'OFFLINE FALLBACK';$('connectionKpi').textContent=online?'CONNECTED':'OFFLINE';$('connectionKpi').className=online?'green':'amber';$('cServer').textContent=online?'ONLINE':'OFFLINE';$('cServer').style.color=online?'var(--green)':'var(--amber)';$('cApi').textContent=online?'RESPONDING':'UNAVAILABLE';$('cApi').style.color=online?'var(--green)':'var(--amber)';}
+async function api(path,body){const opts=body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};const r=await fetch(API+path,opts);if(!r.ok)throw Error('API '+r.status);return r.json();}
+function localModel(p){const mf={cellulose:1.05,pmma:1.12,polymer:1.1,fabric:1.08,foam:1.2,composite:1.04,reference:.25}[p.fuel]||1;const of=p.oxygen_pct/21,tf=p.temperature_c/650,gf=p.gravity_g===0?1.08:.92;const loi=Math.max(8,Math.min(100,100/(of*mf))),margin=p.oxygen_pct-21,spread=tf*of*gf*mf*Math.sqrt(p.diameter_mm/12)*4,peak=p.temperature_c*(.86+.12*of),smoke=Math.min(100,(tf*mf*.8+of*.18)*12),co=Math.min(100,(tf*mf*.7+(p.oxygen_pct<18?.3:0))*10),score=tf*.25+of*.3+mf*.15+gf*.1+Math.sqrt(p.diameter_mm/12)*.1+(p.pressure_kpa/101)*.1,hazard=score<1.25?'LOW':score<1.65?'MODERATE':'HIGH';return{loi_index:loi,oxygen_margin_pct_points:margin,flame_spread_index:spread,peak_temperature_c:peak,smoke_optical_density_index:smoke,co_index:co,hazard_level:hazard};}
+function showResult(r){const map={loi:'loi_index',margin:'oxygen_margin_pct_points',spread:'flame_spread_index',peak:'peak_temperature_c',smoke:'smoke_optical_density_index',co:'co_index'};Object.entries(map).forEach(([id,k])=>$(id).textContent=Number(r[k]??0).toFixed(1)+(id==='peak'?'°':''));const h=r.hazard_level||'LOW';$('hazardText').textContent=h+' SIMULATION PROFILE';$('hazardPill').textContent=h;$('hazardPill').className='pill '+h.toLowerCase();lastPacket=r;updateZoneColors(h);}
+function updateZoneColors(h){document.querySelectorAll('.zone').forEach(el=>{el.classList.remove('low','moderate','high');el.classList.add(el.dataset.zone===zone?h.toLowerCase():'low');el.classList.toggle('selected',el.dataset.zone===zone);});}
+function addPacket(packet){series.temp.push(+packet.temperature_c||0);series.oxygen.push(+packet.oxygen_pct||0);series.smoke.push(+packet.smoke_optical_density_index||0);Object.values(series).forEach(a=>{if(a.length>60)a.shift()});drawCharts();}
+function drawChart(id,data,color){const c=$(id),w=c.clientWidth,h=c.clientHeight,d=window.devicePixelRatio||1;c.width=w*d;c.height=h*d;const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);const pad=28,cw=w-pad-5,ch=h-20,max=Math.max(1,...data)*1.15,min=Math.min(0,...data);g.font='9px Arial';for(let i=0;i<4;i++){let y=7+ch*i/3;g.strokeStyle='#203149';g.beginPath();g.moveTo(pad,y);g.lineTo(w-5,y);g.stroke();g.fillStyle='#71839e';g.fillText((max*(1-i/3)).toFixed(0),2,y+3)}if(data.length<2)return;g.beginPath();data.forEach((v,i)=>{let x=pad+i*cw/59,y=7+ch-(v-min)/(max-min||1)*ch;i?g.lineTo(x,y):g.moveTo(x,y)});g.strokeStyle=color;g.lineWidth=2;g.stroke();}
+function drawCharts(){drawChart('tempChart',series.temp,'#06b6d4');drawChart('oxygenChart',series.oxygen,'#10b981');drawChart('smokeChart',series.smoke,'#f59e0b');}
+function addLog(p,r,id){runNo++;const row={id:id||'FG-'+String(runNo).padStart(4,'0'),time:new Date().toLocaleTimeString(),mode:$('mode').textContent,zone:p.zone,fuel:fuelNames[p.fuel],pressure:p.pressure_kpa,oxygen:p.oxygen_pct,hazard:r.hazard_level||'LOW'};logs.unshift(row);if(logs.length>100)logs.pop();renderLogs();$('runId').textContent=row.id;}
+function renderLogs(){$('logCount').textContent=logs.length+' RECORDS';$('logBody').innerHTML=logs.length?logs.map(x=>`<tr><td>${esc(x.id)}</td><td>${esc(x.time)}</td><td>${esc(x.mode)}</td><td>${esc(x.zone)}</td><td>${esc(x.fuel)}</td><td>${x.pressure} kPa</td><td>${x.oxygen}%</td><td><span class="pill ${x.hazard.toLowerCase()}">${x.hazard}</span></td></tr>`).join(''):'<tr><td colspan="8" class="empty">No runs recorded yet.</td></tr>';}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function run(){const p=read();let r;try{const data=await api('/simulate',p);r=data.result;setMode(true);}catch(e){r=localModel(p);setMode(false);}showResult(r);addPacket({...p,temperature_c:r.peak_temperature_c??p.temperature_c,smoke_optical_density_index:r.smoke_optical_density_index??0});addLog(p,r);}
+function applyPreset(){const p=presets[$('preset').value];keys.forEach(k=>$(k).value=p[k]);gravity=p.gravity;$('fuel').value=p.fuel;zone=p.zone;$('zoneSelect').value=zone;document.querySelectorAll('[data-g]').forEach(b=>b.classList.toggle('selected',+b.dataset.g===gravity));zoneUI();labels();run();}
+function zoneUI(){document.querySelectorAll('.zone').forEach(el=>el.classList.toggle('selected',el.dataset.zone===zone));$('zoneSelect').value=zone;drawShip();}
+async function reset(){stopStream();$('preset').value='iss';const p=presets.iss;keys.forEach(k=>$(k).value=p[k]);gravity=0;$('fuel').value=p.fuel;zone=p.zone;series={temp:[],oxygen:[],smoke:[]};logs=[];runNo=0;renderLogs();labels();zoneUI();try{await api('/reset',{});setMode(true)}catch(e){setMode(false)}showResult(localModel(read()));drawCharts();$('runId').textContent='FG-0000';}
+function sample(){const names=Object.keys(presets);const current=names.indexOf($('preset').value);$('preset').value=names[(current+1)%names.length];applyPreset();}
+async function poll(){try{const packet=await api('/live-telemetry');setMode(true);$('cSensors').textContent='PACKET RECEIVED';$('cSensors').style.color='var(--green)';const r=packet.result||localModel(read());showResult(r);addPacket(packet);$('pressureKpi').textContent=Number(packet.pressure_kpa??$('pressure').value).toFixed(1);$('streamState').textContent='LIVE · '+new Date().toLocaleTimeString();}catch(e){setMode(false);$('cSensors').textContent='OFFLINE FALLBACK';$('cSensors').style.color='var(--amber)';const p=read(),r=localModel(p);showResult(r);const n=(Math.random()-.5);addPacket({temperature_c:Math.max(20,p.temperature_c+n*18),oxygen_pct:Math.max(0,p.oxygen_pct-Math.random()*.04),smoke_optical_density_index:r.smoke_optical_density_index||r.smoke});$('streamState').textContent='LOCAL FALLBACK';}}
+function startStream(){if(streaming)return;streaming=true;$('stream').textContent='Ⅱ STOP LIVE PYTHON STREAM';$('stream').classList.add('active');$('streamState').textContent='STARTING';poll();timer=setInterval(poll,1500);}
+function stopStream(){streaming=false;clearInterval(timer);timer=null;$('stream').textContent='▶ START LIVE PYTHON STREAM';$('stream').classList.remove('active');$('streamState').textContent='STANDBY';}
+function exportCSV(){if(!logs.length)return alert('No telemetry records to export.');const cols=['Run ID','Timestamp','Mode','Zone','Fuel','Pressure kPa','Oxygen %','Hazard'];const rows=logs.map(x=>[x.id,x.time,x.mode,x.zone,x.fuel,x.pressure,x.oxygen,x.hazard]);const csv=[cols,...rows].map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.href=url;a.download='flameguard-telemetry.csv';a.click();URL.revokeObjectURL(url);}
+
+// Click a navigation tab to focus/zoom that real dashboard section.
+const navTabs=[...document.querySelectorAll('.mission-tab')];
+function showSection(id){
+ document.body.classList.remove('focus-mode');
+ document.querySelectorAll('.panel.focused').forEach(p=>p.classList.remove('focused'));
+ navTabs.forEach(t=>t.classList.toggle('active',t.dataset.target===id));
+ if(id==='overview'){window.scrollTo({top:0,behavior:'smooth'});return;}
+ const panel=$(id);if(!panel)return;
+ document.body.classList.add('focus-mode');panel.classList.add('focused');
+}
+navTabs.forEach(t=>t.addEventListener('click',()=>showSection(t.dataset.target)));
+$('closeFocus').addEventListener('click',()=>showSection('overview'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('focus-mode'))showSection('overview')});
+
+keys.forEach(k=>$(k).addEventListener('input',labels));$('fuel').addEventListener('change',labels);$('preset').addEventListener('change',applyPreset);$('zoneSelect').addEventListener('change',e=>{zone=e.target.value;zoneUI()});document.querySelectorAll('[data-g]').forEach(b=>b.addEventListener('click',()=>{gravity=+b.dataset.g;document.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('selected',x===b));}));document.querySelectorAll('.zone').forEach(b=>b.addEventListener('click',()=>{zone=b.dataset.zone;zoneUI()}));$('run').addEventListener('click',run);$('sample').addEventListener('click',sample);$('reset').addEventListener('click',reset);$('stream').addEventListener('click',()=>streaming?stopStream():startStream());$('export').addEventListener('click',exportCSV);$('clear').addEventListener('click',()=>{logs=[];renderLogs()});
+/* Animated spacecraft cutaway: slow orbital drift, parallax stars, engine plume,
+   and a localized fire/damage effect in the selected compartment. */
+const ship=$('ship'),ctx=ship.getContext('2d');
+let stars=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.35+.25,speed:.08+Math.random()*.28,phase:Math.random()*6.28})),frame=0;
+const boxes=[
+ {name:'Life-Support / ECLSS',x:-151,w:78,cx:-112},
+ {name:'Equipment Bay',x:-69,w:76,cx:-31},
+ {name:'Cabin Zone A',x:10,w:76,cx:48},
+ {name:'Cabin Zone B',x:89,w:76,cx:127}
+];
+function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}}
+function flame(x,y,scale,phase){
+ const f=.78+.22*Math.sin(phase*2.3),len=scale*f;
+ const g=ctx.createRadialGradient(x,y,1,x,y,27*scale);g.addColorStop(0,'#fff8c7');g.addColorStop(.22,'#ffd166');g.addColorStop(.56,'#ff6b35');g.addColorStop(1,'#ff3d1f00');
+ ctx.save();ctx.translate(x,y);ctx.scale(1,1);
+ ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-8*scale,0);ctx.bezierCurveTo(-18*scale,-18*scale,-9*scale,-30*len,2*scale,-39*len);ctx.bezierCurveTo(8*scale,-22*scale,19*scale,-14*scale,8*scale,0);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#ffb347';ctx.beginPath();ctx.moveTo(-5*scale,0);ctx.quadraticCurveTo(-12*scale,-13*scale,1*scale,-25*len);ctx.quadraticCurveTo(12*scale,-13*scale,5*scale,0);ctx.fill();ctx.restore();
+}
+function drawShip(){
+ const w=ship.clientWidth,h=ship.clientHeight,d=window.devicePixelRatio||1;
+ if(!w||!h)return;const pxw=Math.round(w*d),pxh=Math.round(h*d);if(ship.width!==pxw||ship.height!==pxh){ship.width=pxw;ship.height=pxh;}ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);
+ const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#07172a');bg.addColorStop(.55,'#040c1b');bg.addColorStop(1,'#09182b');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ // distant orbital haze and stars drifting at different speeds
+ const haze=ctx.createRadialGradient(w*.72,h*.48,2,w*.72,h*.48,w*.48);haze.addColorStop(0,'#16446b44');haze.addColorStop(1,'#07172a00');ctx.fillStyle=haze;ctx.fillRect(0,0,w,h);
+ stars.forEach(s=>{let x=((s.x*w-frame*s.speed*.22)%w+w)%w;ctx.globalAlpha=.35+.55*(.5+.5*Math.sin(frame*.035+s.phase));ctx.fillStyle='#b8e8ff';ctx.beginPath();ctx.arc(x,s.y*h,s.r,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;
+ // faint orbital guide
+ ctx.save();ctx.strokeStyle='#2d577333';ctx.setLineDash([3,8]);ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(w*.5,h*.52,w*.43,h*.31,-.04,0,Math.PI*2);ctx.stroke();ctx.restore();
+ const scale=Math.min((w-34)/500,(h-42)/260,1.12),drift=Math.sin(frame*.012)*13,bob=Math.sin(frame*.022)*3.2;
+ ctx.save();ctx.translate(w/2+drift,h*.53+bob);ctx.scale(scale,scale);
+ // solar arrays / radiator wings behind the pressure hull
+ const wingGlow=ctx.createLinearGradient(0,-100,0,100);wingGlow.addColorStop(0,'#1a5275');wingGlow.addColorStop(1,'#0b2946');
+ [-1,1].forEach(side=>{ctx.save();ctx.translate(-22,side*57);rounded(-105,-17,210,34,4,'#0b2743','#4a7795');for(let i=0;i<12;i++){ctx.strokeStyle=i%2?'#286087':'#3c82a9';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-96+i*17,-14);ctx.lineTo(-96+i*17,14);ctx.stroke()}ctx.strokeStyle='#7cb4d2';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-side*6);ctx.lineTo(0,side*35);ctx.stroke();ctx.restore()});
+ // aft service module and engine bells, at the left side of the moving craft
+ rounded(-222,-34,48,68,9,'#637c91','#b3c9d9');rounded(-228,-26,12,52,4,'#243f59','#6b91aa');
+ [-20,20].forEach(y=>{ctx.fillStyle='#263c51';ctx.beginPath();ctx.moveTo(-218,y-10);ctx.lineTo(-242,y-15);ctx.lineTo(-242,y+15);ctx.lineTo(-218,y+10);ctx.closePath();ctx.fill();ctx.strokeStyle='#9cb6c9';ctx.stroke()});
+ // engine glow and animated exhaust trail
+ const pulse=.85+.15*Math.sin(frame*.16);[-20,20].forEach(y=>{const eg=ctx.createLinearGradient(-245,y,-310,y);eg.addColorStop(0,'#fff3b0');eg.addColorStop(.22,'#ffad48');eg.addColorStop(.65,'#f36a37aa');eg.addColorStop(1,'#f36a3700');ctx.fillStyle=eg;ctx.beginPath();ctx.moveTo(-239,y-7);ctx.quadraticCurveTo(-270,y-12*pulse,-310-pulse*12,y);ctx.quadraticCurveTo(-270,y+12*pulse,-239,y+7);ctx.fill()});
+ // main pressure hull: metallic shell with subtle highlights
+ const hull=ctx.createLinearGradient(0,-48,0,48);hull.addColorStop(0,'#d4e1e9');hull.addColorStop(.18,'#8299aa');hull.addColorStop(.48,'#405d73');hull.addColorStop(.78,'#243e55');hull.addColorStop(1,'#142b41');
+ ctx.beginPath();ctx.moveTo(-185,-37);ctx.lineTo(135,-37);ctx.quadraticCurveTo(166,-37,187,-20);ctx.lineTo(222,0);ctx.lineTo(187,20);ctx.quadraticCurveTo(166,37,135,37);ctx.lineTo(-185,37);ctx.quadraticCurveTo(-199,37,-199,22);ctx.lineTo(-199,-22);ctx.quadraticCurveTo(-199,-37,-185,-37);ctx.closePath();ctx.fillStyle=hull;ctx.fill();ctx.strokeStyle='#c1d4e2';ctx.lineWidth=2;ctx.stroke();
+ // nose cone metallic panels
+ ctx.beginPath();ctx.moveTo(135,-37);ctx.quadraticCurveTo(166,-37,187,-20);ctx.lineTo(222,0);ctx.lineTo(187,20);ctx.quadraticCurveTo(166,37,135,37);ctx.closePath();const nose=ctx.createLinearGradient(145,-25,210,25);nose.addColorStop(0,'#c9d8e1');nose.addColorStop(1,'#48657c');ctx.fillStyle=nose;ctx.fill();ctx.strokeStyle='#d9e8f0';ctx.stroke();
+ // compartment cutaway windows, frames and equipment silhouettes
+ boxes.forEach((b,i)=>{const active=b.name===zone,hz=active?(lastPacket?.hazard_level||'LOW'):'LOW';const bx=b.x, bw=b.w;
+ ctx.save();ctx.beginPath();ctx.rect(bx,-27,bw,54);ctx.clip();ctx.fillStyle='#102b42';ctx.fillRect(bx,-27,bw,54);
+ // compartment interior gradients and ribs
+ const cg=ctx.createLinearGradient(0,-27,0,27);cg.addColorStop(0,'#31546c');cg.addColorStop(.5,'#132f47');cg.addColorStop(1,'#0a2036');ctx.fillStyle=cg;ctx.fillRect(bx,-27,bw,54);
+ for(let k=0;k<4;k++){ctx.strokeStyle='#83a5b833';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx+7+k*18,-24);ctx.lineTo(bx+7+k*18,24);ctx.stroke()}
+ // machinery, storage racks and cabin panels
+ rounded(bx+8,-14,bw-16,28,3,'#1c4058','#6d91a7');ctx.fillStyle='#6a8799';ctx.fillRect(bx+13,-8,12,16);ctx.fillStyle='#243f54';ctx.fillRect(bx+30,-10,bw-44,20);
+ for(let q=0;q<3;q++){ctx.fillStyle=q===1?'#5fc6d9':'#66869a';ctx.fillRect(bx+33+q*9,-6,5,12)}
+ if(active){const heat=hz==='HIGH'?'#ff4b32':hz==='MODERATE'?'#ff9b38':'#f5bd55';ctx.fillStyle=heat+'33';ctx.fillRect(bx,-27,bw,54);ctx.strokeStyle=heat;ctx.lineWidth=2;ctx.strokeRect(bx+2,-25,bw-4,50)}
+ ctx.restore();
+ // external hull ribs and zone ID
+ ctx.strokeStyle='#d4e2e944';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(bx,-35);ctx.lineTo(bx,35);ctx.stroke();
+ ctx.fillStyle='#e0edf5';ctx.font='bold 8px Arial';ctx.textAlign='center';ctx.fillText(['ECLSS','AVIONICS','CABIN A','CABIN B'][i],b.cx,48);
+ if(active){
+   const severity=hz==='HIGH'?1:hz==='MODERATE'?.72:.45,fx=b.cx,fy=-2;
+   // localized damage: glowing breach, scorched hull and flickering flame visible through the bay
+   ctx.save();ctx.shadowColor='#ff5b2e';ctx.shadowBlur=22*severity;ctx.fillStyle='#ff6b35';ctx.beginPath();ctx.ellipse(fx,fy,9+severity*4,6+severity*3,0,0,Math.PI*2);ctx.fill();ctx.restore();
+   ctx.strokeStyle='#ffb35c';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(fx-13,-30);ctx.lineTo(fx-7,-21);ctx.lineTo(fx-12,-12);ctx.moveTo(fx+13,-29);ctx.lineTo(fx+7,-18);ctx.lineTo(fx+14,-9);ctx.stroke();
+   flame(fx,fy-1,1.0+severity*.22,frame*.12);flame(fx+9,fy+5,.65,frame*.16+1.2);
+   // small sparks drifting away from the affected hull section
+   for(let j=0;j<7;j++){const t=frame*.06+j*1.7,px=fx+Math.sin(t)* (10+j*2),py=-20-((frame*.8+j*9)%32);ctx.fillStyle=j%2?'#ffb347':'#ffe7a3';ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(px,py,1.1+(j%2)*.5,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+   // smoke wisps above the damaged area
+   for(let j=0;j<4;j++){const sy=-36-((frame*.18+j*9)%24),sx=fx+Math.sin(frame*.025+j)*5;ctx.fillStyle='#8b9aaa';ctx.globalAlpha=.13;ctx.beginPath();ctx.arc(sx,sy,3+j*.8,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+ }
+ });
+ // nose sensor window, cockpit lights, hull seam and antennas
+ ctx.fillStyle='#7be5f5';ctx.shadowColor='#38d9f4';ctx.shadowBlur=12;ctx.beginPath();ctx.ellipse(178,0,13,8,-.1,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+ ctx.strokeStyle='#d8e6ed';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-180,-37);ctx.lineTo(-180,37);ctx.moveTo(135,-37);ctx.lineTo(135,37);ctx.stroke();
+ [-152,-135,158].forEach(x=>{ctx.fillStyle='#8bd6ed';ctx.beginPath();ctx.arc(x,-31,2.1,0,Math.PI*2);ctx.fill()});
+ ctx.restore();
+ // heads-up scene labels
+ ctx.fillStyle='#8eb8d3';ctx.font='9px Arial';ctx.textAlign='left';ctx.fillText('ORBITAL FLIGHT PATH',12,h-13);ctx.textAlign='right';ctx.fillText('ATTITUDE  +0.2°  ·  DRIFT '+(drift>=0?'+':'')+drift.toFixed(1)+' m',w-12,h-13);
+ ctx.fillStyle='#5e809d';ctx.font='8px Arial';ctx.textAlign='left';ctx.fillText('LIVE CUTAWAY  /  DAMAGE LOCALIZATION',12,32);
+}
+ship.addEventListener('click',e=>{const r=ship.getBoundingClientRect(),scale=Math.min((r.width-34)/500,(r.height-42)/260,1.12),drift=Math.sin(frame*.012)*13;const x=(e.clientX-r.left-r.width/2-drift)/scale,y=(e.clientY-r.top-r.height*.53-Math.sin(frame*.022)*3.2)/scale;const b=boxes.find(b=>x>=b.x&&x<=b.x+b.w&&y>=-31&&y<=31);if(b){zone=b.name;zoneUI();}});
+function animate(){frame++;drawShip();requestAnimationFrame(animate)}
+function clock(){ $('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})+' LOCAL';}
+window.addEventListener('resize',()=>{drawCharts();drawShip()});labels();zoneUI();showResult(localModel(read()));drawCharts();drawShip();clock();setInterval(clock,1000);animate();api('/health').then(()=>setMode(true)).catch(()=>setMode(false));
+})();
+</script></body></html>
